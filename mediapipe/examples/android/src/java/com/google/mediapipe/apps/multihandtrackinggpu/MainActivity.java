@@ -45,11 +45,6 @@ public class MainActivity extends AppCompatActivity {
   private static final String OUTPUT_LANDMARKS_STREAM_NAME = "multi_hand_landmarks";
   private static final CameraHelper.CameraFacing CAMERA_FACING = CameraHelper.CameraFacing.BACK;
 
-  // Flips the camera-preview frames vertically before sending them into FrameProcessor to be
-  // processed in a MediaPipe graph, and flips the processed frames back when they are displayed.
-  // This is needed because OpenGL represents images assuming the image origin is at the bottom-left
-  // corner, whereas MediaPipe in general assumes the image origin is at top-left.
-  private static final boolean FLIP_FRAMES_VERTICALLY = true;
 
   static {
     // Load all native libraries needed by the app.
@@ -94,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
             BINARY_GRAPH_NAME,
             INPUT_VIDEO_STREAM_NAME,
             OUTPUT_VIDEO_STREAM_NAME);
-    processor.getVideoSurfaceOutput().setFlipY(FLIP_FRAMES_VERTICALLY);
+    processor.getVideoSurfaceOutput().setFlipY(true);
 
     processor.addPacketCallback(
         OUTPUT_LANDMARKS_STREAM_NAME,
@@ -117,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
   protected void onResume() {
     super.onResume();
     converter = new ExternalTextureConverter(eglManager.getContext());
-    converter.setFlipY(FLIP_FRAMES_VERTICALLY);
+    converter.setFlipY(false);
     converter.setConsumer(processor);
     if (PermissionHelper.cameraPermissionsGranted(this)) {
       startCamera();
